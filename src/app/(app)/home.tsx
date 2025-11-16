@@ -2,6 +2,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from "reac
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Bell, Settings2 } from "lucide-react-native";
+import { router } from "expo-router";
 
 const categories = ["All", "T-Shirt", "Hoodies", "Jeans", "Shoes", "Accessories"];
 
@@ -57,7 +58,7 @@ const Home = () => {
       {/* Header */}
       <View className="flex flex-row items-center justify-between mb-6">
         <Text className="text-5xl font-bold tracking-tighter">Discover</Text>
-        <TouchableOpacity className="p-2">
+        <TouchableOpacity className="p-2" onPress={()=>{router.push("/(app)/notifications")}}>
           <Bell size={28} strokeWidth={2.5} color="black" />
         </TouchableOpacity>
       </View>

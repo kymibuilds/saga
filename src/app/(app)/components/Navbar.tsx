@@ -17,12 +17,14 @@ export default function Navbar() {
     <View className="flex flex-row justify-around items-center bg-white border-t border-neutral-300 h-24 pb-4">
       {navItems.map((item) => {
         const Icon = item.icon;
-        const active = path === item.route;
+
+        // Improved active state
+        const active = path.startsWith(item.route);
 
         return (
           <TouchableOpacity
             key={item.route}
-            onPress={() => router.replace(item.route)}
+            onPress={() => router.push(item.route)}
             className="items-center justify-center"
           >
             <Icon
@@ -30,7 +32,11 @@ export default function Navbar() {
               strokeWidth={active ? 3 : 2}
               color={active ? "black" : "#777"}
             />
-            <Text className={`text-xs mt-1 ${active ? "text-black" : "text-neutral-500"}`}>
+            <Text
+              className={`text-xs mt-1 ${
+                active ? "text-black" : "text-neutral-500"
+              }`}
+            >
               {item.name}
             </Text>
           </TouchableOpacity>
