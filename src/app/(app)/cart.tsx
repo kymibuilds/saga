@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Plus, Minus, Trash } from "lucide-react-native";
+import { ArrowLeft, Plus, Minus, Trash2 } from "lucide-react-native";
+import { router } from "expo-router";
 
 /* ------------------------
    MOCK CART DATA
@@ -26,7 +27,7 @@ const initialCart = [
 export default function Cart() {
   const [cart, setCart] = useState(initialCart);
 
-  const updateQty = (id: string, delta: number) => {
+  const updateQty = (id, delta) => {
     setCart((prev) =>
       prev
         .map((item) =>
@@ -38,7 +39,7 @@ export default function Cart() {
     );
   };
 
-  const removeItem = (id: string) => {
+  const removeItem = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
@@ -47,120 +48,127 @@ export default function Cart() {
   const total = subtotal + shipping;
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-50">
-      <View className="px-6 pt-4 flex-1">
+    <SafeAreaView className="flex-1 bg-white px-6 pt-6 pb-40">
+      
+      {/* Header */}
+      <View className="flex flex-row items-center mb-6">
+        <Text className="text-5xl font-semibold tracking-tighter">Cart</Text>
+      </View>
 
-        {/* Header */}
-        <View className="relative flex items-center mb-6">
-          <Text className="text-4xl font-bold tracking-tight text-black">
-            Cart
-          </Text>
-        </View>
+      {/* CART LIST */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: cart.length > 0 ? 280 : 100 }}
+      >
+        {cart.map((item) => (
+          <View
+            key={item.id}
+            className="bg-white rounded-xl border border-neutral-200 p-4 mb-4"
+          >
+            <View className="flex flex-row gap-4">
+              <Image
+                source={item.image}
+                className="w-20 h-20 rounded-xl"
+                resizeMode="cover"
+              />
 
-        {/* CART LIST */}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120 }}
-        >
-          {cart.map((item) => (
-            <View
-              key={item.id}
-              className="bg-white rounded-2xl p-4 mb-5 shadow-sm"
-            >
-              <View className="flex flex-row gap-4">
-                <Image
-                  source={item.image}
-                  className="w-20 h-20 rounded-xl"
-                  resizeMode="cover"
-                />
-
-                <View className="flex-1 justify-center">
-                  <Text className="text-lg font-semibold text-black">
-                    {item.name}
-                  </Text>
-                  <Text className="text-neutral-800 font-medium mt-1">
-                    ${item.price}
-                  </Text>
-                </View>
-
-                {/* REMOVE */}
-                <TouchableOpacity onPress={() => removeItem(item.id)}>
-                  <Trash size={22} color="#444" strokeWidth={1.8} />
-                </TouchableOpacity>
-              </View>
-
-              {/* Quantity Controls */}
-              <View className="flex flex-row items-center justify-between mt-4">
-                <View className="flex flex-row items-center gap-3">
-
-                  <TouchableOpacity
-                    onPress={() => updateQty(item.id, -1)}
-                    className="w-10 h-10 bg-neutral-200 items-center justify-center rounded-xl"
-                  >
-                    <Minus size={18} color="black" />
-                  </TouchableOpacity>
-
-                  <Text className="text-lg font-semibold">{item.qty}</Text>
-
-                  <TouchableOpacity
-                    onPress={() => updateQty(item.id, 1)}
-                    className="w-10 h-10 bg-black items-center justify-center rounded-xl"
-                  >
-                    <Plus size={18} color="white" />
-                  </TouchableOpacity>
-
-                </View>
-
-                <Text className="text-lg font-semibold text-black">
-                  ${item.price * item.qty}
+              <View className="flex-1 justify-center">
+                <Text className="text-base font-semibold text-neutral-900">
+                  {item.name}
+                </Text>
+                <Text className="text-lg font-bold text-black mt-1">
+                  ${item.price}
                 </Text>
               </View>
-            </View>
-          ))}
 
-          {/* If empty */}
-          {cart.length === 0 && (
-            <View className="mt-20 items-center">
-              <Text className="text-neutral-600 text-lg">Your cart is empty</Text>
-            </View>
-          )}
-        </ScrollView>
-
-        {/* TOTAL SECTION */}
-        {cart.length > 0 && (
-          <View className="absolute bottom-0 left-0 right-0 bg-white p-6 border-t border-neutral-200">
-            <View className="flex flex-row justify-between mb-2">
-              <Text className="text-neutral-600">Subtotal</Text>
-              <Text className="text-black font-medium">${subtotal.toFixed(2)}</Text>
+              {/* REMOVE */}
+              <TouchableOpacity 
+                onPress={() => removeItem(item.id)}
+                activeOpacity={0.9}
+                className="self-start"
+              >
+                <Trash2 size={20} color="#525252" strokeWidth={2.5} />
+              </TouchableOpacity>
             </View>
 
-            <View className="flex flex-row justify-between mb-3">
-              <Text className="text-neutral-600">Shipping</Text>
-              <Text className="text-black font-medium">${shipping.toFixed(2)}</Text>
-            </View>
+            {/* Divider */}
+            <View className="border-t border-neutral-200 my-3" />
 
-            <View className="h-px bg-neutral-200 my-2" />
+            {/* Quantity Controls */}
+            <View className="flex flex-row items-center justify-between">
+              <View className="flex flex-row items-center gap-3">
 
-            <View className="flex flex-row justify-between mb-5">
-              <Text className="text-xl font-semibold text-black">Total</Text>
-              <Text className="text-xl font-semibold text-black">
-                ${total.toFixed(2)}
+                <TouchableOpacity
+                  onPress={() => updateQty(item.id, -1)}
+                  activeOpacity={0.9}
+                  className="w-10 h-10 bg-neutral-50 border border-neutral-300 items-center justify-center rounded-xl"
+                >
+                  <Minus size={18} color="black" strokeWidth={2.5} />
+                </TouchableOpacity>
+
+                <Text className="text-base font-semibold text-black min-w-[20px] text-center">
+                  {item.qty}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => updateQty(item.id, 1)}
+                  activeOpacity={0.9}
+                  className="w-10 h-10 bg-black items-center justify-center rounded-xl"
+                >
+                  <Plus size={18} color="white" strokeWidth={2.5} />
+                </TouchableOpacity>
+
+              </View>
+
+              <Text className="text-lg font-bold text-black">
+                ${item.price * item.qty}
               </Text>
             </View>
+          </View>
+        ))}
 
-            {/* Checkout Button */}
-            <TouchableOpacity
-              activeOpacity={0.9}
-              className="bg-black rounded-xl py-4"
-            >
-              <Text className="text-center text-white text-lg font-semibold">
-                Proceed to Checkout
-              </Text>
-            </TouchableOpacity>
+        {/* If empty */}
+        {cart.length === 0 && (
+          <View className="mt-20 items-center">
+            <Text className="text-neutral-500 text-base">Your cart is empty</Text>
           </View>
         )}
+      </ScrollView>
 
-      </View>
+      {/* TOTAL SECTION ABOVE NAVBAR */}
+      {cart.length > 0 && (
+        <View className="absolute bottom-20 left-0 right-0 bg-white px-6 pb-6 pt-4 border-t border-neutral-200">
+          <View className="flex flex-row justify-between mb-2">
+            <Text className="text-neutral-600 text-base">Subtotal</Text>
+            <Text className="text-black font-semibold text-base">${subtotal.toFixed(2)}</Text>
+          </View>
+
+          <View className="flex flex-row justify-between mb-3">
+            <Text className="text-neutral-600 text-base">Shipping</Text>
+            <Text className="text-black font-semibold text-base">${shipping.toFixed(2)}</Text>
+          </View>
+
+          <View className="border-t border-neutral-200 my-3" />
+
+          <View className="flex flex-row justify-between mb-5">
+            <Text className="text-xl font-bold text-black">Total</Text>
+            <Text className="text-xl font-bold text-black">
+              ${total.toFixed(2)}
+            </Text>
+          </View>
+
+          {/* Checkout Button */}
+          <TouchableOpacity
+            activeOpacity={0.9}
+            className="bg-black rounded-xl py-4"
+          >
+            <Text className="text-center text-white text-base font-semibold">
+              Proceed to Checkout
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
     </SafeAreaView>
   );
 }

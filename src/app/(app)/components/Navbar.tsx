@@ -4,7 +4,7 @@ import { router, usePathname } from "expo-router";
 
 export default function Navbar() {
   const path = usePathname();
-
+  
   const navItems = [
     { name: "Home", route: "/(app)/home", icon: Home },
     { name: "Search", route: "/(app)/search", icon: Search },
@@ -12,29 +12,26 @@ export default function Navbar() {
     { name: "Cart", route: "/(app)/cart", icon: ShoppingCart },
     { name: "Account", route: "/(app)/account", icon: User },
   ];
-
+  
   return (
-    <View className="flex flex-row justify-around items-center bg-white border-t border-neutral-300 h-24 pb-4">
+    <View className="absolute bottom-0 left-0 right-0 flex flex-row justify-around items-center bg-white border-t border-neutral-200 h-20 pb-2">
       {navItems.map((item) => {
         const Icon = item.icon;
-
-        // Improved active state
-        const active = path.startsWith(item.route);
-
+        const active = path === item.route || path.includes(item.route.split('/').pop());
         return (
           <TouchableOpacity
             key={item.route}
             onPress={() => router.push(item.route)}
-            className="items-center justify-center"
+            className="items-center justify-center py-2"
           >
             <Icon
-              size={26}
-              strokeWidth={active ? 3 : 2}
-              color={active ? "black" : "#777"}
+              size={24}
+              strokeWidth={active ? 2.5 : 1.5}
+              color={active ? "#000000" : "#9CA3AF"}
             />
             <Text
-              className={`text-xs mt-1 ${
-                active ? "text-black" : "text-neutral-500"
+              className={`text-[10px] mt-1 ${
+                active ? "text-black font-semibold" : "text-gray-400"
               }`}
             >
               {item.name}

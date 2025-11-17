@@ -16,8 +16,7 @@ import { router } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
 
 export default function AccountHome() {
-
-    const {signOut} = useAuth();
+  const { signOut } = useAuth();
   const handleSignout = async () => {
     await signOut();
     router.replace("/(auth)/sign-in");
@@ -36,7 +35,6 @@ export default function AccountHome() {
           >
             <ArrowLeft size={30} strokeWidth={2.3} color="black" />
           </TouchableOpacity>
-
           <Text className="text-4xl font-bold tracking-tight text-black">
             Account
           </Text>

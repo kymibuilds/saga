@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, X } from "lucide-react-native";
+import { ArrowLeft, Heart } from "lucide-react-native";
 import { router } from "expo-router";
 
 /* -------------------------------------
@@ -49,110 +49,139 @@ const products = [
       uri: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=80",
     },
   },
+  {
+    id: "5",
+    name: "White Sneakers",
+    price: "$85",
+    image: {
+      uri: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80",
+    },
+  },
+  {
+    id: "6",
+    name: "Grey Sweatshirt",
+    price: "$42",
+    image: {
+      uri: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80",
+    },
+  },
 ];
 
 export default function Search() {
   const [recent, setRecent] = useState(mockRecent);
   const [query, setQuery] = useState("");
+  const [favorites, setFavorites] = useState({});
 
   const clearRecent = () => setRecent([]);
 
+  const toggleFavorite = (id) => {
+    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-neutral-50">
-      <View className="px-6 pt-4 flex-1">
+    <SafeAreaView className="flex-1 bg-white px-6 py-6">
+      
+      {/* Header */}
+      <View className="flex flex-row items-center mb-6">
+        <Text className="text-5xl font-bold tracking-tighter">Search</Text>
+      </View>
 
-        {/* HEADER */}
-        <View className="relative flex items-center mb-6">
-          <TouchableOpacity
-            className="absolute left-0"
-            onPress={() => {
-              if (router.canGoBack()) router.back();
-              else router.push("/(app)/home");
-            }}
-          >
-            <ArrowLeft size={30} strokeWidth={2.3} color="black" />
-          </TouchableOpacity>
+      {/* Search Input */}
+      <View className="h-14 flex-row items-center bg-white rounded-xl px-4 border border-neutral-300 mb-6">
+        <TextInput
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search products..."
+          placeholderTextColor="#9CA3AF"
+          className="flex-1 text-black text-base"
+        />
+      </View>
 
-          <Text className="text-4xl font-bold tracking-tight text-black">
-            Search
-          </Text>
-        </View>
-
-        {/* SEARCH BOX */}
-        <View className="bg-white border border-neutral-300 rounded-xl px-4 py-4 mb-6">
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search products..."
-            placeholderTextColor="#9CA3AF"
-            className="text-base text-black"
-          />
-        </View>
-
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120 }}
-        >
-          {/* ---------------------
-               RECENT SEARCHES
-            ---------------------- */}
-          {recent.length > 0 && (
-            <View className="mb-8">
-              <View className="flex flex-row items-center justify-between mb-3">
-                <Text className="text-xl font-semibold text-black">
-                  Recent Searches
-                </Text>
-
-                <TouchableOpacity onPress={clearRecent}>
-                  <Text className="text-neutral-500">Clear All</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View className="flex flex-row flex-wrap gap-3">
-                {recent.map((item, idx) => (
-                  <View
-                    key={idx}
-                    className="px-4 py-2 bg-white rounded-xl border border-neutral-300"
-                  >
-                    <Text className="text-neutral-700">{item}</Text>
-                  </View>
-                ))}
-              </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {/* Recent Searches */}
+        {recent.length > 0 && (
+          <View className="mb-6">
+            <View className="flex flex-row items-center justify-between mb-3">
+              <Text className="text-lg font-bold text-black">
+                Recent Searches
+              </Text>
+              <TouchableOpacity onPress={clearRecent} activeOpacity={0.9}>
+                <Text className="text-neutral-500 font-semibold">Clear All</Text>
+              </TouchableOpacity>
             </View>
-          )}
 
-          {/* ---------------------
-               Suggested Products
-            ---------------------- */}
-          <View>
-            <Text className="text-xl font-semibold text-black mb-4">
-              Suggested for you
-            </Text>
-
-            <View className="flex flex-row flex-wrap justify-between">
-              {products.map((item) => (
+            <View className="flex flex-row flex-wrap gap-2">
+              {recent.map((item, idx) => (
                 <View
-                  key={item.id}
-                  className="bg-white rounded-2xl mb-6 w-[48%] overflow-hidden shadow-sm"
+                  key={idx}
+                  className="px-5 py-2 bg-neutral-50 rounded-xl border border-neutral-300"
                 >
-                  <Image
-                    source={item.image}
-                    className="w-full h-48"
-                    resizeMode="cover"
-                  />
-
-                  <View className="p-3">
-                    <Text className="text-lg font-semibold text-black">
-                      {item.name}
-                    </Text>
-                    <Text className="text-neutral-700 mt-1">{item.price}</Text>
-                  </View>
+                  <Text className="text-neutral-700 font-semibold text-md">{item}</Text>
                 </View>
               ))}
             </View>
           </View>
-        </ScrollView>
-      </View>
+        )}
+
+        {/* Suggested Products */}
+        <View>
+          <Text className="text-lg font-bold text-black mb-4">
+            Suggested for you
+          </Text>
+
+          <View className="flex flex-row flex-wrap justify-between">
+            {products.map((prod) => (
+              <TouchableOpacity 
+                key={prod.id} 
+                className="w-[48%] mb-4" 
+                activeOpacity={0.9}
+              >
+                <View className="bg-white rounded-xl overflow-hidden border border-neutral-200">
+                  
+                  {/* Image + Heart */}
+                  <View className="relative">
+                    <Image
+                      source={prod.image}
+                      className="w-full h-48"
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      onPress={() => toggleFavorite(prod.id)}
+                      activeOpacity={0.8}
+                      className="absolute top-3 right-3 bg-white rounded-full p-2"
+                    >
+                      <Heart
+                        size={18}
+                        color={favorites[prod.id] ? "#ef4444" : "#525252"}
+                        fill={favorites[prod.id] ? "#ef4444" : "transparent"}
+                        strokeWidth={2.5}
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Divider */}
+                  <View className="border-t border-neutral-200" />
+
+                  {/* Info */}
+                  <View className="p-3">
+                    <Text className="text-base font-semibold text-neutral-900">
+                      {prod.name}
+                    </Text>
+                    <Text className="text-lg font-bold text-black mt-1">
+                      {prod.price}
+                    </Text>
+                  </View>
+
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+
     </SafeAreaView>
   );
 }

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, TouchableOpacity, Pressable, Vibration } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeft } from "lucide-react-native";
@@ -43,7 +43,6 @@ export default function NotificationSettings() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="px-6 pt-4">
 
-        {/* Header */}
         <View className="relative flex items-center mb-4">
           <TouchableOpacity
             className="absolute left-0"
@@ -60,12 +59,19 @@ export default function NotificationSettings() {
           </Text>
         </View>
 
-        {/* Toggles */}
         <View className="mt-4">
 
           <Row label="App Notifications" state={general} setState={setGeneral} />
           <Row label="Sound" state={sound} setState={setSound} />
-          <Row label="Vibration" state={vibrate} setState={setVibrate} />
+
+          <Row
+            label="Vibration"
+            state={vibrate}
+            setState={(next) => {
+              setVibrate(next);
+              if (next) Vibration.vibrate(30);
+            }}
+          />
 
           <View className="h-px bg-neutral-200 my-3" />
 
