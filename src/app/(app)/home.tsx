@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  DevSettings,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,95 +24,95 @@ const categories = [
 const products = [
   {
     id: "1",
-    name: "y2k TEE limited edition",
+    name: "y2k TEE limited edition very limited",
     category: "TShirts",
     price: "$29",
-    image: require("../../../public/images/clothes/cloth1.jpg")
+    image: require("../../../public/images/clothes/cloth1.jpg"),
   },
   {
     id: "2",
     name: "grey crop top",
     category: "TShirts",
     price: "$32",
-    image: require("../../../public/images/clothes/cloth2.jpg")
+    image: require("../../../public/images/clothes/cloth2.jpg"),
   },
   {
     id: "3",
-    name: "limited edition grey croptop",
+    name: "limited grey croptop",
     category: "Hoodies",
     price: "$49",
-    image: require("../../../public/images/clothes/cloth3.jpg")
+    image: require("../../../public/images/clothes/cloth3.jpg"),
   },
   {
     id: "4",
     name: "Brazil Jersey",
     category: "Hoodies",
     price: "$45",
-    image: require("../../../public/images/clothes/cloth4.jpg")
+    image: require("../../../public/images/clothes/cloth4.jpg"),
   },
   {
     id: "5",
     name: "Black Tee",
     category: "Jeans",
     price: "$59",
-    image: require("../../../public/images/clothes/cloth5.jpg")
+    image: require("../../../public/images/clothes/cloth5.jpg"),
   },
   {
     id: "6",
     name: "Fish Tee",
     category: "Jeans",
     price: "$62",
-    image: require("../../../public/images/clothes/cloth6.jpg")
+    image: require("../../../public/images/clothes/cloth6.jpg"),
   },
   {
     id: "7",
     name: "Cloth 7",
     category: "Shoes",
     price: "$79",
-    image: require("../../../public/images/clothes/cloth7.jpg")
+    image: require("../../../public/images/clothes/cloth7.jpg"),
   },
   {
     id: "8",
     name: "Cloth 8",
     category: "Shoes",
     price: "$85",
-    image: require("../../../public/images/clothes/cloth8.jpg")
+    image: require("../../../public/images/clothes/cloth8.jpg"),
   },
   {
     id: "9",
     name: "Cloth 9",
     category: "Accessories",
     price: "$19",
-    image: require("../../../public/images/clothes/cloth9.jpg")
+    image: require("../../../public/images/clothes/cloth9.jpg"),
   },
   {
     id: "10",
     name: "Cloth 10",
     category: "Accessories",
     price: "$22",
-    image: require("../../../public/images/clothes/cloth10.jpg")
+    image: require("../../../public/images/clothes/cloth10.jpg"),
   },
   {
     id: "11",
     name: "Cloth 11",
     category: "TShirts",
     price: "$28",
-    image: require("../../../public/images/clothes/cloth11.jpg")
+    image: require("../../../public/images/clothes/cloth11.jpg"),
   },
   {
     id: "12",
     name: "Cloth 12",
     category: "Hoodies",
     price: "$55",
-    image: require("../../../public/images/clothes/cloth12.jpg")
+    image: require("../../../public/images/clothes/cloth12.jpg"),
   },
   {
     id: "13",
     name: "Cloth 13",
     category: "Accessories",
     price: "$15",
-    image: require("../../../public/images/clothes/cloth13.jpg")
-  }
+    image: require("../../../public/images/clothes/cloth13.jpg"),
+  },
 ];
 
 const Home = () => {
@@ -127,7 +128,6 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6 py-6">
-      
       {/* Header */}
       <View className="flex flex-row items-center justify-between mb-6">
         <Text className="text-5xl font-bold tracking-tighter">Discover</Text>
@@ -141,10 +141,10 @@ const Home = () => {
       </View>
 
       {/* Search */}
-      <View className="flex flex-row items-center gap-3 mb-6">
-        <View className="flex-1 h-14 flex-row items-center bg-white rounded-xl px-4 border border-neutral-300">
+      <View className="flex flex-row items-center gap-2 mb-6">
+        <View className="flex-1 h-14 flex-row items-center bg-white rounded-xl px-4 border border-neutral-200">
           <TextInput
-            placeholder="Search products..."
+            placeholder="Search for clothes ..."
             placeholderTextColor="#9CA3AF"
             className="flex-1 text-black text-base"
           />
@@ -158,12 +158,12 @@ const Home = () => {
         </TouchableOpacity>
       </View>
 
-      {/* FIXED CATEGORY BAR */}
-      <View className="mb-4">
+      {/* Category Bar (full-bleed) */}
+      <View className="mb-4 -mx-6">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 6, paddingRight: 24 }}
+          contentContainerStyle={{ gap: 6, paddingLeft: 24, paddingRight: 24 }}
         >
           {categories.map((item) => (
             <TouchableOpacity
@@ -173,7 +173,7 @@ const Home = () => {
               className={`px-5 py-2 rounded-xl ${
                 active === item
                   ? "bg-black"
-                  : "bg-neutral-50 border border-neutral-300"
+                  : "bg-white border border-neutral-200"
               }`}
             >
               <Text
@@ -188,7 +188,7 @@ const Home = () => {
         </ScrollView>
       </View>
 
-      {/* PRODUCTS ONLY SCROLL */}
+      {/* Products */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1"
@@ -196,10 +196,13 @@ const Home = () => {
       >
         <View className="flex flex-row flex-wrap justify-between">
           {filtered.map((prod) => (
-            <TouchableOpacity key={prod.id} className="w-[48%] mb-4" activeOpacity={0.9}>
+            <TouchableOpacity
+              key={prod.id}
+              className="w-[48%] mb-4"
+              activeOpacity={0.9}
+            >
               <View className="bg-white rounded-xl overflow-hidden border border-neutral-200">
-                
-                {/* Image + Heart */}
+                {/* Image + heart */}
                 <View className="relative">
                   <Image
                     source={prod.image}
@@ -225,20 +228,22 @@ const Home = () => {
 
                 {/* Info */}
                 <View className="p-3">
-                  <Text className="text-base font-semibold text-neutral-900">
+                  <Text
+                    className="text-base font-semibold
+                   text-neutral-900 truncate"
+                    numberOfLines={1}
+                  >
                     {prod.name}
                   </Text>
                   <Text className="text-lg font-bold text-black mt-1">
                     {prod.price}
                   </Text>
                 </View>
-
               </View>
             </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
-
     </SafeAreaView>
   );
 };
