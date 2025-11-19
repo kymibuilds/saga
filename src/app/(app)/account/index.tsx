@@ -80,13 +80,6 @@ export default function AccountHome() {
             onPress={() => router.push("/(app)/account/addresses")}
           />
 
-          {/* Section: Security */}
-          <AccountRow
-            label="Security"
-            icon={<Shield size={22} color="black" strokeWidth={2} />}
-            onPress={() => router.push("/(app)/account/security")}
-          />
-
           {/* Section: FAQ */}
           <AccountRow
             label="FAQ / Help"

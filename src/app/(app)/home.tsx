@@ -5,134 +5,77 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  DevSettings,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Bell, Settings2, Heart } from "lucide-react-native";
 import { router } from "expo-router";
+import { fetchProducts } from "@/api/products";
+import { useUser } from "@clerk/clerk-expo";
+import {
+  getSavedProducts,
+  saveProduct,
+  removeSavedProduct,
+} from "@/api/saved";
 
-const categories = [
-  "All",
-  "TShirts",
-  "Hoodies",
-  "Jeans",
-  "Shoes",
-  "Accessories",
-];
-
-const products = [
-  {
-    id: "1",
-    name: "y2k TEE limited edition very limited",
-    category: "TShirts",
-    price: "$29",
-    image: require("../../../public/images/clothes/cloth1.jpg"),
-  },
-  {
-    id: "2",
-    name: "grey crop top",
-    category: "TShirts",
-    price: "$32",
-    image: require("../../../public/images/clothes/cloth2.jpg"),
-  },
-  {
-    id: "3",
-    name: "limited grey croptop",
-    category: "Hoodies",
-    price: "$49",
-    image: require("../../../public/images/clothes/cloth3.jpg"),
-  },
-  {
-    id: "4",
-    name: "Brazil Jersey",
-    category: "Hoodies",
-    price: "$45",
-    image: require("../../../public/images/clothes/cloth4.jpg"),
-  },
-  {
-    id: "5",
-    name: "Black Tee",
-    category: "Jeans",
-    price: "$59",
-    image: require("../../../public/images/clothes/cloth5.jpg"),
-  },
-  {
-    id: "6",
-    name: "Fish Tee",
-    category: "Jeans",
-    price: "$62",
-    image: require("../../../public/images/clothes/cloth6.jpg"),
-  },
-  {
-    id: "7",
-    name: "Cloth 7",
-    category: "Shoes",
-    price: "$79",
-    image: require("../../../public/images/clothes/cloth7.jpg"),
-  },
-  {
-    id: "8",
-    name: "Cloth 8",
-    category: "Shoes",
-    price: "$85",
-    image: require("../../../public/images/clothes/cloth8.jpg"),
-  },
-  {
-    id: "9",
-    name: "Cloth 9",
-    category: "Accessories",
-    price: "$19",
-    image: require("../../../public/images/clothes/cloth9.jpg"),
-  },
-  {
-    id: "10",
-    name: "Cloth 10",
-    category: "Accessories",
-    price: "$22",
-    image: require("../../../public/images/clothes/cloth10.jpg"),
-  },
-  {
-    id: "11",
-    name: "Cloth 11",
-    category: "TShirts",
-    price: "$28",
-    image: require("../../../public/images/clothes/cloth11.jpg"),
-  },
-  {
-    id: "12",
-    name: "Cloth 12",
-    category: "Hoodies",
-    price: "$55",
-    image: require("../../../public/images/clothes/cloth12.jpg"),
-  },
-  {
-    id: "13",
-    name: "Cloth 13",
-    category: "Accessories",
-    price: "$15",
-    image: require("../../../public/images/clothes/cloth13.jpg"),
-  },
-];
+const categories = ["All", "TShirts", "Hoodies", "Jeans", "Shoes", "Accessories"];
 
 const Home = () => {
   const [active, setActive] = React.useState("All");
-  const [favorites, setFavorites] = React.useState({});
+  const [products, setProducts] = React.useState([]);
+  const [savedIds, setSavedIds] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const { user } = useUser();
+
+  /* Load Products */
+  React.useEffect(() => {
+    loadProducts();
+  }, []);
+
+  async function loadProducts() {
+    const { data } = await fetchProducts();
+    setProducts(data || []);
+    setLoading(false);
+  }
+
+  /* Load Saved Items */
+  React.useEffect(() => {
+    if (user && products.length > 0) {
+      loadSaved();
+    }
+  }, [user, products]);
+
+  async function loadSaved() {
+    const ids = await getSavedProducts(user.id);
+    setSavedIds(ids.map(String));
+  }
+
+  /* Toggle Favorite */
+  async function toggleFavorite(productId: string) {
+    if (!user) return;
+
+    const isSaved = savedIds.includes(productId);
+
+    if (isSaved) {
+      await removeSavedProduct(user.id, productId);
+      setSavedIds((prev) => prev.filter((id) => id !== productId));
+    } else {
+      await saveProduct(user.id, productId);
+      setSavedIds((prev) => [...prev, productId]);
+    }
+  }
 
   const filtered =
     active === "All" ? products : products.filter((p) => p.category === active);
 
-  const toggleFavorite = (id) => {
-    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
+  /* UI */
   return (
     <SafeAreaView className="flex-1 bg-white px-6 py-6">
       {/* Header */}
       <View className="flex flex-row items-center justify-between mb-6">
         <Text className="text-5xl font-bold tracking-tighter">Discover</Text>
         <TouchableOpacity
-          activeOpacity={0.9}
           className="p-2"
           onPress={() => router.push("/(app)/notifications")}
         >
@@ -140,7 +83,7 @@ const Home = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Search */}
+      {/* Search Bar */}
       <View className="flex flex-row items-center gap-2 mb-6">
         <View className="flex-1 h-14 flex-row items-center bg-white rounded-xl px-4 border border-neutral-200">
           <TextInput
@@ -150,15 +93,12 @@ const Home = () => {
           />
         </View>
 
-        <TouchableOpacity
-          className="h-14 w-14 bg-black rounded-xl items-center justify-center"
-          activeOpacity={0.9}
-        >
+        <TouchableOpacity className="h-14 w-14 bg-black rounded-xl items-center justify-center">
           <Settings2 color="white" size={22} strokeWidth={2} />
         </TouchableOpacity>
       </View>
 
-      {/* Category Bar (full-bleed) */}
+      {/* Category Bar */}
       <View className="mb-4 -mx-6">
         <ScrollView
           horizontal
@@ -169,7 +109,6 @@ const Home = () => {
             <TouchableOpacity
               key={item}
               onPress={() => setActive(item)}
-              activeOpacity={0.9}
               className={`px-5 py-2 rounded-xl ${
                 active === item
                   ? "bg-black"
@@ -196,47 +135,42 @@ const Home = () => {
       >
         <View className="flex flex-row flex-wrap justify-between">
           {filtered.map((prod) => (
-            <TouchableOpacity
-              key={prod.id}
-              className="w-[48%] mb-4"
-              activeOpacity={0.9}
-            >
+            <TouchableOpacity key={prod.id} className="w-[48%] mb-4">
               <View className="bg-white rounded-xl overflow-hidden border border-neutral-200">
-                {/* Image + heart */}
                 <View className="relative">
                   <Image
-                    source={prod.image}
+                    source={{ uri: prod.image_url }}
                     className="w-full h-48"
                     resizeMode="cover"
                   />
+
                   <TouchableOpacity
                     onPress={() => toggleFavorite(prod.id)}
-                    activeOpacity={0.8}
                     className="absolute top-3 right-3 bg-white rounded-full p-2"
                   >
                     <Heart
                       size={18}
-                      color={favorites[prod.id] ? "#ef4444" : "#525252"}
-                      fill={favorites[prod.id] ? "#ef4444" : "transparent"}
+                      color={
+                        savedIds.includes(prod.id) ? "#ef4444" : "#525252"
+                      }
+                      fill={
+                        savedIds.includes(prod.id)
+                          ? "#ef4444"
+                          : "transparent"
+                      }
                       strokeWidth={2.5}
                     />
                   </TouchableOpacity>
                 </View>
 
-                {/* Divider */}
                 <View className="border-t border-neutral-200" />
 
-                {/* Info */}
                 <View className="p-3">
-                  <Text
-                    className="text-base font-semibold
-                   text-neutral-900 truncate"
-                    numberOfLines={1}
-                  >
+                  <Text className="text-base font-semibold text-neutral-900 truncate">
                     {prod.name}
                   </Text>
                   <Text className="text-lg font-bold text-black mt-1">
-                    {prod.price}
+                    ${prod.price}
                   </Text>
                 </View>
               </View>
