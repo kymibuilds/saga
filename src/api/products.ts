@@ -6,3 +6,13 @@ export async function fetchProducts() {
     .select("*")
     .order("created_at", { ascending: false });
 }
+
+export async function fetchProductById(id: string) {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  return { data, error };
+}

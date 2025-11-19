@@ -135,7 +135,9 @@ const Home = () => {
       >
         <View className="flex flex-row flex-wrap justify-between">
           {filtered.map((prod) => (
-            <TouchableOpacity key={prod.id} className="w-[48%] mb-4">
+            <TouchableOpacity key={prod.id} className="w-[48%] mb-4"
+            onPress={() => router.push(`/(app)/product/${prod.id}`)}
+            >
               <View className="bg-white rounded-xl overflow-hidden border border-neutral-200">
                 <View className="relative">
                   <Image
