@@ -165,7 +165,7 @@ const Home = () => {
                   </TouchableOpacity>
                 </View>
 
-                <View className="border-t border-neutral-200" />
+                <View className="border-tb border-neutral-200" />
 
                 <View className="p-3">
                   <Text className="text-base font-semibold text-neutral-900 truncate">

@@ -61,8 +61,7 @@ export default function Cart() {
       REMOVE ITEM
   -------------------------- */
   async function handleRemove(id) {
-    await removeFromCart(user.id, id);
-    setCart((prev) => prev.filter((item) => item.product_id !== id));
+;
   }
 
   /* -------------------------
