@@ -36,9 +36,6 @@ export default function Cart() {
     setLoading(false);
   }
 
-  /* -------------------------
-      UPDATE QUANTITY
-  -------------------------- */
   async function handleQty(id, delta, currentQty) {
     const newQty = currentQty + delta;
 
